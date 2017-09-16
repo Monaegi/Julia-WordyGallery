@@ -24,8 +24,8 @@ CONFIG_SECRET_DEPLOY_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_deploy.jso
 CONFIG_SECRET_DEBUG_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_debug.json')
 
 config_secret_common = json.loads(open(CONFIG_SECRET_COMMON_FILE).read())
-config_secret_deploy = json.loads(open(CONFIG_SECRET_DEPLOY_FILE).read())
-config_secret_debug = json.loads(open(CONFIG_SECRET_DEBUG_FILE).read())
+# config_secret_deploy = json.loads(open(CONFIG_SECRET_DEPLOY_FILE).read())
+# config_secret_debug = json.loads(open(CONFIG_SECRET_DEBUG_FILE).read())
 
 
 # Quick-start development settings - unsuitable for production
@@ -49,8 +49,8 @@ INSTALLED_APPS = [
 
     ### Custom ###
     'art',
-    'member',
     'motif',
+    'member',
     ##############
 
     ### Install ###

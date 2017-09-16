@@ -5,6 +5,11 @@ from art.models import Art
 # Create your models here.
 # 작품별 주제 모델
 
+__all__ = (
+    'Motif',
+    'Comment',
+)
+
 
 class Motif(models.Model):
     # 이야기하고 싶은 모티프명

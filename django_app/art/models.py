@@ -1,12 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+__all__ = (
+    'Art',
+)
+
 
 # 작품 저장 모델
 class Art(models.Model):
     # 작품명
     name_art = models.CharField(
-        max_length=50,
+        max_length=100,
     )
     # 작품 이미지
     img_art = models.CharField(
@@ -25,7 +29,7 @@ class Art(models.Model):
         blank=True,
     )
     # 댓글
-    comment = models.ForeignKey('Comment')
+    comment = models.ForeignKey('motif.Comment')
 
 
 # 작품 분류할 장르 모델
@@ -48,7 +52,7 @@ class Genre(models.Model):
         choices=GENRE_TYPE_CHOICES
     )
     # 작품 id
-    name_art = models.ManyToManyField(
+    art = models.ManyToManyField(
         Art,
-        "name_art",
+        related_name='art',
     )
