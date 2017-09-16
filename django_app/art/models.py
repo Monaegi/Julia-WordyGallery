@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-User = get_user_model()
-
 
 # 작품 저장 모델
 class Art(models.Model):

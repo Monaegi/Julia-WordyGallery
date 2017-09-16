@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.db import models
+from art.models import Art
 
 # Create your models here.
 # 작품별 주제 모델
-from ..art import Art
 
 
 class Motif(models.Model):
@@ -29,7 +30,7 @@ class Comment(models.Model):
     comment = models.TextField()
 
     # 댓글을 단 사용자
-    name_user = models.ForeignKey()
+    name_user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     # 댓글 생성시간
     date_created = models.DateTimeField(

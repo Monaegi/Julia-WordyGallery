@@ -30,6 +30,8 @@ class MyUser(AbstractBaseUser):
         ('facebook', '페이스북 로그인'),
     )
 
+    # USERNAME_FIELD = ['username',]
+
     # 장고, 페이스북 로그인 유저를 구분하는 필드
     user_type = models.CharField(
         max_length=20,
