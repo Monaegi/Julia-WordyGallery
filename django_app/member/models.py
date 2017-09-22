@@ -1,8 +1,14 @@
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.conf import settings
 from django.contrib.auth import models as auth_models, get_user_model
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
+from utils.fields.custom_imagefields import CustomImageField
 
 ### 기본 기능 ###
 # 사용자 로그인 - 일반 / 페이스북
@@ -30,8 +36,8 @@ class MyUserManager(BaseUserManager):
             )
             extra_fields.setdefault('is_staff', False)
             extra_fields.setdefault('is_superuser', False)
-            user.set_password(password=password)
-            user.is_active=True
+            user.set_password(password)
+            user.is_active = True
             user.save()
             return user
         except ValidationError:
@@ -68,7 +74,8 @@ class MyUser(AbstractBaseUser):
     # 장고, 페이스북 로그인 유저를 구분하는 필드
     user_type = models.CharField(
         max_length=20,
-        choices=USER_TYPE_CHOICES
+        choices=USER_TYPE_CHOICES,
+        default=USER_TYPE_DJANGO,
     )
 
     # 회원가입시 입력한 사용자의 ID
@@ -87,8 +94,10 @@ class MyUser(AbstractBaseUser):
 
     # 사용자 프로필이미지를 저장하는 필드.
     # TODO CustomImageField 설정 필요
-    img_profile = models.CharField(
-        max_length=300,
+    img_profile = CustomImageField(
+        upload_to='member',
+        default='member/basic_profile.png',
+        blank=True
     )
 
     # AbstractBaseUser를 상속받음으로써 정의해줘야하는 bool 필드들
@@ -102,7 +111,7 @@ class MyUser(AbstractBaseUser):
 
     EMAIL_FIELD = 'username'
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['nickname',]
+    REQUIRED_FIELDS = ['name', ]
 
     def __str__(self):
         return self.name if self.name else self.username
@@ -118,11 +127,20 @@ class MyUser(AbstractBaseUser):
             return True
         return auth_models._user_has_module_perms(self, app_label)
 
+    # 커스텀 수정 퍼미션 메서드용
+    def has_edit_perm(self, perm, obj=None):
+        if self.pk == obj.pk:
+            return True
+        return auth_models._user_has_perm(self, perm, obj)
+
     def has_perm(self, perm, obj=None):
         if self.is_active and self.is_superuser:
             return True
-
         return auth_models._user_has_perm(self, perm, obj)
+
+    # AbstractBaseUser에는 존재하지 않으므로 따로 선언해줌.
+    def user_permissions(self):
+        return self._user_permissions
 
     # 장고 admin 이름출력시 필요한 메서드. AbstractBaseUser에는 없어서 따로 정의해줌.
     def get_full_name(self):
@@ -131,4 +149,12 @@ class MyUser(AbstractBaseUser):
     def get_short_name(self):
         return self.username
 
+
 User = get_user_model()
+
+
+# 장고 로그인용 토큰 생성 메서드.
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

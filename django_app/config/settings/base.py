@@ -38,6 +38,17 @@ SECRET_KEY = config_secret_common['django']['secret_key']
 AUTH_USER_MODEL = 'member.MyUser'
 
 
+# REST_API 설정
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+      'rest_framework.authentication.BasicAuthentication',
+      'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    )
+}
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -55,20 +66,10 @@ INSTALLED_APPS = [
 
     ### Install ###
     'rest_framework',
+    'rest_framework.authtoken',
     ###############
 
 ]
-
-# REST_API 설정
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-      'rest_framework.authentication.BasicAuthentication',
-      'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
-    )
-}
 
 
 MIDDLEWARE = [
@@ -137,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'asia/seoul'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 

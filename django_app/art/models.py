@@ -28,8 +28,6 @@ class Art(models.Model):
     text_art = models.TextField(
         blank=True,
     )
-    # 댓글
-    comment = models.ForeignKey('motif.Comment')
 
 
 # 작품 분류할 장르 모델

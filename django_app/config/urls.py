@@ -23,4 +23,10 @@ urlpatterns = [
         include('rest_framework.urls',
                 namespace='rest_framework')
     ),
+    url(r'^member/',
+        include('member.urls')
+        ),
+    # url(r'^gallery/',
+    #     include('art.urls')
+    #     ),
 ]
