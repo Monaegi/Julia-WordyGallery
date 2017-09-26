@@ -24,8 +24,8 @@ CONFIG_SECRET_DEPLOY_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_deploy.jso
 CONFIG_SECRET_DEBUG_FILE = os.path.join(CONFIG_SECRET_DIR, 'settings_debug.json')
 
 config_secret_common = json.loads(open(CONFIG_SECRET_COMMON_FILE).read())
-config_secret_deploy = json.loads(open(CONFIG_SECRET_DEPLOY_FILE).read())
-config_secret_debug = json.loads(open(CONFIG_SECRET_DEBUG_FILE).read())
+# config_secret_deploy = json.loads(open(CONFIG_SECRET_DEPLOY_FILE).read())
+# config_secret_debug = json.loads(open(CONFIG_SECRET_DEBUG_FILE).read())
 
 
 # Quick-start development settings - unsuitable for production
@@ -34,14 +34,22 @@ config_secret_debug = json.loads(open(CONFIG_SECRET_DEBUG_FILE).read())
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config_secret_common['django']['secret_key']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+AUTH_USER_MODEL = 'member.MyUser'
 
+
+# REST_API 설정
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+      'rest_framework.authentication.BasicAuthentication',
+      'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    )
+}
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,7 +57,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    ### Custom ###
+    'art',
+    'motif',
+    'member',
+    ##############
+
+    ### Install ###
+    'rest_framework',
+    'rest_framework.authtoken',
+    ###############
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -117,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'asia/seoul'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -129,4 +149,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+# 분할
+# STATIC_URL = '/static/'
+
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = []
