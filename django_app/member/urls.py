@@ -26,8 +26,13 @@ urlpatterns = [
         name='logout'
     ),
     url(
-        r'^(?P<pk>\d+)$',
+        r'^profile/(?P<pk>\d+)$',
         apis.UserInfoView.as_view(),
         name='profile'
-    )
+    ),
+    url(
+        r'^profile/(?P<pk>\d+)/edit$',
+        apis.UserInfoView.as_view(),
+        name='profile'
+    ),
 ]

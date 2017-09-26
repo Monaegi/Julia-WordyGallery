@@ -40,6 +40,10 @@ class UserInfoUpdateSerializers(serializers.ModelSerializer):
         max_length=50,
         style={'input_type': 'password'},
     )
+    extra_kwargs = {
+        'new_password1': {'write_only': True},
+        'new_password2': {'write_only': True},
+    }
 
     class Meta:
         model = User
@@ -56,7 +60,7 @@ class UserInfoUpdateSerializers(serializers.ModelSerializer):
             'username',
         )
 
-    # 입력값의 검증만 실시.
+    # 비밀번호 입력값의 검증만 실시.
     def validate(self, data):
         password = data.get('password')
         if data.get('new_password1') == '' and data.get('new_password2') == '':

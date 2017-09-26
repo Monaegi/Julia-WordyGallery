@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^member/',
         include('member.urls')
         ),
-    # url(r'^gallery/',
-    #     include('art.urls')
-    #     ),
+    url(r'^art/',
+        include('art.urls')
+        ),
 ]

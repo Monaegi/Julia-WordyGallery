@@ -1,5 +1,6 @@
-from django.contrib.auth import get_user_model
 from django.db import models
+
+from utils.fields.custom_imagefields import CustomImageField2
 
 __all__ = (
     'Art',
@@ -13,10 +14,11 @@ class Art(models.Model):
         max_length=100,
     )
     # 작품 이미지
-    img_art = models.CharField(
+    img_art = CustomImageField2(
         max_length=500,
+        default='default_art.jpg'
     )
-    # 아티스트명
+    # 아티스트명C
     name_artist = models.CharField(
         max_length=100,
     )
@@ -33,16 +35,17 @@ class Art(models.Model):
 # 작품 분류할 장르 모델
 class Genre(models.Model):
     GENRE_TYPE_CHOICES = (
-        ('Collage', 'Collage'),
-        ('Drawing', 'Drawing'),
-        ('Installation', 'Installation'),
-        ('New Media', 'New Media'),
-        ('Graphic Design', 'Graphic Design'),
-        ('Photography', 'Photography'),
-        ('Video Art', 'Video Art'),
-        ('Print Making', 'Print Making'),
-        ('Sculpture', 'Sculpture'),
-        ('Others', 'Others'),
+        # ('DB에 저장되는 값', '화면에 보이는 값'),
+        ('collage', '콜라주'),
+        ('drawing', '드로잉'),
+        ('installation', '설치미술'),
+        ('new-media', '뉴미디어'),
+        ('graphic-design', '그래픽디자인'),
+        ('photography', '사진'),
+        ('video-art', '비디오 아트'),
+        ('print-making', '프린팅'),
+        ('sculpture', '조각'),
+        ('others', '기타'),
     )
     # 장르명
     name_genre = models.CharField(
@@ -54,3 +57,6 @@ class Genre(models.Model):
         Art,
         related_name='art',
     )
+
+    def __str__(self, *args, **kwargs):
+        return self.name_genre
