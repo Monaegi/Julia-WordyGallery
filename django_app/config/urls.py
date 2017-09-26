@@ -18,15 +18,26 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
+    # auth
     url(
         r'api-auth/',
         include('rest_framework.urls',
                 namespace='rest_framework')
     ),
+
+    # member
     url(r'^member/',
         include('member.urls')
         ),
+
+    # art
     url(r'^art/',
         include('art.urls')
+        ),
+    #
+    # # motif
+    url(r'^art/',
+        include('motif.urls')
         ),
 ]
