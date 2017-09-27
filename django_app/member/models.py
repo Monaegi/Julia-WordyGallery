@@ -14,13 +14,13 @@ from rest_framework.authtoken.models import Token
 
 from utils.fields.custom_imagefields import CustomImageField
 
-### 기본 기능 ###
-# 사용자 로그인 - 일반 / 페이스북
-# 회원가입
-# 로그아웃
-# 프로필 정보변경
-# 계정탈퇴
-###############
+############# 기본 기능 #############
+# [완료] 사용자 로그인 - 일반 / 페이스북 #
+# [완료] 회원가입                    #
+# [완료] 로그아웃                    #
+# [완료] 프로필 정보변경               #
+# [완료] 계정탈퇴(삭제)               #
+###################################
 
 __all__ = (
     'MyUser'
@@ -29,8 +29,10 @@ __all__ = (
 
 # 커스텀 사용자 생성 매니저
 class MyUserManager(BaseUserManager):
-    # 일반사용자 생성 메서드
     def create_user(self, username, name, email=None, password=None, **extra_fields):
+        """
+        일반사용자 생성 메서드
+        """
         try:
             user = self.model(
                 user_type=User.USER_TYPE_DJANGO,
@@ -47,8 +49,10 @@ class MyUserManager(BaseUserManager):
         except ValidationError:
             raise ValidationError({'detail': 'Enter a proper Email Account'})
 
-    # 관리자 생성 메서드
     def create_superuser(self, username, name, email=None, password=None, **extra_fields):
+        """
+        관리자 생성 메서드
+        """
         try:
             superuser = self.create_user(
                 user_type=User.USER_TYPE_DJANGO,
@@ -97,7 +101,7 @@ class MyUserManager(BaseUserManager):
             # 페이스북 사용자의 이미지를 저장한 임시 파일객체로 저장
             fb_user.img_profile.save(
                 'fb_prof_{}'.format(
-                img_name), temp_img)
+                    img_name), temp_img)
             # 페이스북 사용자 반환
             return fb_user
 
