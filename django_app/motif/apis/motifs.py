@@ -1,18 +1,23 @@
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from art.models import Art
 from art.serializers import ArtListSerializers
-from member.permissions import IsOwnerOrReadOnly
+from utils.permissions import IsOwnerOrReadOnly
 from ..models import Motif
-from ..serializers import MotifListCreateSerializers
+from ..serializers import MotifListCreateSerializers, MotifUpdateSerializers
 
 __all__ = (
+    # 모티프 리스트 조회 및 생성
     'MotifListCreateView',
+
+    # 모티프 세부페이지 조회
     'MotifDetailRetrieveView',
+
+    # 모티프 세부페이지 수정 / 삭제
     'MotifDetailUpdateDestroyView',
 )
 
@@ -23,6 +28,7 @@ class MotifListCreateView(generics.ListCreateAPIView):
     """
     serializer_class = MotifListCreateSerializers
     permission_classes = (IsOwnerOrReadOnly,)
+    parser_classes = (MultiPartParser, FormParser, )
 
     def get(self, request, *args, **kwargs):
         # 해당 작품 정보
@@ -56,13 +62,12 @@ class MotifListCreateView(generics.ListCreateAPIView):
         """
         모티프 생성
         """
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        motif = serializer.validated_data  # Ordered Dict
+        newmotif_serializer = self.serializer_class(data=request.data)
+        newmotif_serializer.is_valid(raise_exception=True)
+        new_motif = newmotif_serializer.save()
 
-        motif_serializer = MotifListCreateSerializers(motif)
+        motif_serializer = MotifListCreateSerializers(new_motif)
         # 새로운 모티프 저장
-        motif_serializer.save(motif)
         content = {
             "detail": "새로운 모티프를 생성했습니다. 이야기를 시작하세요!",
             'motifInfo': motif_serializer.data
@@ -72,12 +77,17 @@ class MotifListCreateView(generics.ListCreateAPIView):
 
 class MotifDetailRetrieveView(generics.RetrieveAPIView):
     """
-    모티브 세부페이지 조회
+    모티프 세부페이지 조회
     """
     serializer_class = MotifListCreateSerializers
-    parser_classes = (MultiPartParser, )
+    # 로그인한 사용자만 페이지 렌더, 작성자가 아니면 읽기 전용 권한.
+    permission_classes = (IsOwnerOrReadOnly, IsAuthenticated, )
+    parser_classes = (MultiPartParser, FormParser, )
 
     def get(self, request, *args, **kwargs):
+        """
+        모티프 세부 정보와 연결된 작품 정보
+        """
         art_info = Art.objects.get(pk=kwargs['art_pk'])
         artinfo_serializer = ArtListSerializers(art_info)
         motif_info = Motif.objects.get(pk=kwargs['motif_pk'])
@@ -101,7 +111,34 @@ class MotifDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly,)
 
     def put(self, request, *args, **kwargs):
-        motif = Motif.objects.get(name_motif=)
+        """
+        모티프 제목 수정
+        """
+        motif_info = Motif.objects.get(pk=kwargs['motif_pk'])
+        # 모티프 작성자만 제목 수정 가능.
+        if self.request.user == motif_info.name_user:
+            motifupdate_serializer = MotifUpdateSerializers
+            motif_update = motifupdate_serializer(motif_info, data=request.data, partial=True)
+            motif_update.is_valid(raise_exception=True)
+            motif_update.save()
+
+            changed_motif = self.serializer_class(motif_update)
+            content = {
+                "detail": "모티프가 변경되었습니다.",
+                "motifInfo": changed_motif.data
+            }
+            return Response(content, status=status.HTTP_200_OK)
+        content = {
+            "detail": "모티프를 수정할 권한이 없습니다."
+        }
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
     def delete(self, request, *args, **kwargs):
-        pass
+        """
+        모티프 삭제
+        """
+        content = {
+            "detail": "모티프가 삭제되었습니다."
+        }
+        super().destroy(self, request, *args, **kwargs)
+        return Response(content, status=status.HTTP_200_OK)

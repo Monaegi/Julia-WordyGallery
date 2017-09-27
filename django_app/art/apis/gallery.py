@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from art.models import Art
-from member.permissions import IsOwnerOrReadOnly
+from utils.permissions import IsOwnerOrReadOnly
 from ..serializers import ArtListSerializers
 
 __all__ = (
