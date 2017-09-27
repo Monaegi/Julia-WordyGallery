@@ -33,7 +33,8 @@ config_secret_common = json.loads(open(CONFIG_SECRET_COMMON_FILE).read())
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config_secret_common['django']['secret_key']
-
+FACEBOOK_APP_ID = config_secret_common['facebook_login']['facebook_app_id']
+FACEBOOK_SECRET_CODE = config_secret_common['facebook_login']['facebook_secret_code']
 
 AUTH_USER_MODEL = 'member.MyUser'
 
