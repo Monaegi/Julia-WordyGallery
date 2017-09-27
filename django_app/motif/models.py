@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from art.models import Art
 
@@ -10,6 +11,8 @@ __all__ = (
     'Comment',
 )
 
+User = get_user_model()
+
 
 class Motif(models.Model):
     # 이야기하고 싶은 모티프명
@@ -20,6 +23,10 @@ class Motif(models.Model):
     name_art = models.ForeignKey(
         Art,
         # on_delete=models.PROTECT,
+    )
+    motif_author = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
     )
 
 
@@ -35,7 +42,10 @@ class Comment(models.Model):
     comment = models.TextField()
 
     # 댓글을 단 사용자
-    name_user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    comment_author = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT
+    )
 
     # 댓글 생성시간
     date_created = models.DateTimeField(

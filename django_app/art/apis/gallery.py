@@ -1,9 +1,10 @@
 from rest_framework import generics, status
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from art.models import Art
-from member.permissions import IsOwnerOrReadOnly
+from utils.permissions import IsOwnerOrReadOnly
 from ..serializers import ArtListSerializers
 
 __all__ = (
@@ -36,6 +37,7 @@ class ArtDetailView(generics.RetrieveAPIView):
     """
     serializer_class = ArtListSerializers
     permission_classes = (IsOwnerOrReadOnly,)
+    parser_classes = (MultiPartParser, FormParser,)
 
     def get(self, request, *args, **kwargs):
         art = Art.objects.get(pk=kwargs['art_pk'])

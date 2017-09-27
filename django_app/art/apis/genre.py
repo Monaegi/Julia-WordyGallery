@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from member.permissions import IsOwnerOrReadOnly
+from utils.permissions import IsOwnerOrReadOnly
 from ..models import Genre
 from ..serializers import GenreListSerializers, ArtListSerializers
 

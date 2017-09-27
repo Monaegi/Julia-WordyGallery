@@ -3,8 +3,8 @@ from rest_framework import generics, status, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 
-from ..permissions import IsOwnerOrReadOnly
 from ..serializers import UserInfoSerializers, UserInfoUpdateSerializers
+from utils.permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
@@ -44,7 +44,7 @@ class UserInfoView(generics.RetrieveUpdateDestroyAPIView):
         user = User.objects.get(pk=kwargs['pk'])
         serializer_class = UserInfoUpdateSerializers
         serializer = serializer_class(user, data=request.data, partial=True)
-        parser_classes = (MultiPartParser, FormParser, )
+        parser_classes = (MultiPartParser, FormParser,)
 
         # (1) 비밀번호가 다 있을 경우
         if request.data.get('password', default=None) and request.data.get(
@@ -81,7 +81,7 @@ class UserInfoView(generics.RetrieveUpdateDestroyAPIView):
 
         # (2) 비번 입력했으나 하나라도 없을 경우
         elif request.data.get('password', default=None) or request.data.get(
-            'new_password1', default=None) or request.data.get('new_password2', default=None):
+                'new_password1', default=None) or request.data.get('new_password2', default=None):
             content = {
                 "detail": "비밀번호를 변경하시려면 기존 비밀번호와 새 비밀번호 필드를 모두 입력해주세요."
             }
