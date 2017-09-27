@@ -1,15 +1,19 @@
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from art.models import Art
 from art.serializers import ArtListSerializers
 from member.permissions import IsOwnerOrReadOnly
+from ..models import Motif
 from ..serializers import MotifListCreateSerializers
 
 __all__ = (
     'MotifListCreateView',
-    'MotifCreateUpdateDestroyView',
+    'MotifDetailRetrieveView',
+    'MotifDetailUpdateDestroyView',
 )
 
 
@@ -37,6 +41,17 @@ class MotifListCreateView(generics.ListCreateAPIView):
         }
         return Response(content, status=status.HTTP_200_OK)
 
+    def perform_create(self, serializer):
+        """
+        객체 생성 메서드
+        """
+        queryset = Motif.objects.filter(name_motif=self.kwargs['name_motif'])
+        if queryset.exists():
+            raise ValidationError({
+                "detail": "이미 존재하는 모티프입니다. 새로운 주제를 생성해주세요."
+            })
+        serializer.save(data=self.request.data)
+
     def post(self, request, *args, **kwargs):
         """
         모티프 생성
@@ -55,15 +70,38 @@ class MotifListCreateView(generics.ListCreateAPIView):
         return Response(content, status=status.HTTP_200_OK)
 
 
-class MotifCreateUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class MotifDetailRetrieveView(generics.RetrieveAPIView):
     """
-    모티프 수정, 삭제
+    모티브 세부페이지 조회
+    """
+    serializer_class = MotifListCreateSerializers
+    parser_classes = (MultiPartParser, )
+
+    def get(self, request, *args, **kwargs):
+        art_info = Art.objects.get(pk=kwargs['art_pk'])
+        artinfo_serializer = ArtListSerializers(art_info)
+        motif_info = Motif.objects.get(pk=kwargs['motif_pk'])
+        motifinfo_serializer = MotifListCreateSerializers(motif_info)
+
+        content = {
+            'artInfo': artinfo_serializer.data,
+            'motifInfo': motifinfo_serializer.data
+        }
+        return Response(
+            content,
+            status=status.HTTP_200_OK
+        )
+
+
+class MotifDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    모티프 세부페이지 수정, 삭제
     """
     serializer_class = MotifListCreateSerializers
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly,)
 
     def put(self, request, *args, **kwargs):
-        pass
+        motif = Motif.objects.get(name_motif=)
 
     def delete(self, request, *args, **kwargs):
         pass

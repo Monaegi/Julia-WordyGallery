@@ -16,7 +16,7 @@ class Art(models.Model):
     # 작품 이미지
     img_art = CustomImageField2(
         max_length=500,
-        default='default_art.jpg'
+        default='art/default_art.jpg'
     )
     # 아티스트명C
     name_artist = models.CharField(
