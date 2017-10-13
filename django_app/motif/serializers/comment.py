@@ -9,6 +9,9 @@ __all__ = (
 
     # 댓글 생성용
     'CommentListCreateSerializers',
+
+    # 댓글 수정 및 삭제용
+    'CommentUpdateDestroySerializers',
 )
 
 
@@ -30,6 +33,7 @@ class CommentListCreateSerializers(serializers.ModelSerializer):
         fields = (
             'comment',
             'motif',
+            'comment_author',
         )
 
     def validate(self, data):
@@ -58,7 +62,7 @@ class CommentListCreateSerializers(serializers.ModelSerializer):
         comment = Comment.objects.create(
             motif=self.validated_data['motif'],
             comment=self.validated_data['comment'],
-            comment_author=self.validated_data['comment_author'].pk,
+            comment_author=self.validated_data['comment_author'],
         )
         return comment
 
@@ -74,19 +78,26 @@ class CommentUpdateDestroySerializers(serializers.ModelSerializer):
             'comment_author',
             'motif',
         )
-        read_only_fields = (
-            'motif',
-            'comment_author',
-        )
+        # read_only_fields = (
+        #     'motif',
+        #     'comment_author',
+        # )
 
     def validate(self, data):
+        comment = data.get('comment')
         comment_author = data.get('comment_author')
-        if not comment_author == self.request.user:
+        motif = data.get('motif')
+        if not comment:
             raise serializers.ValidationError({
-                "detail": "댓글 작성자만 수정이 가능합니다."
+                "detail": "수정할 댓글을 입력하세요."
             })
+        print(data)
         return data
 
     def update(self, instance, validated_data):
-        pass
+        self.instance.comment = validated_data['comment']
+        self.instance.comment_author = validated_data['comment_author']
+        self.instance.motif = validated_data['motif']
+        instance.save()
+        return instance
 

@@ -15,7 +15,7 @@ __all__ = (
     'MotifListCreateView',
 
     # 모티프 세부페이지 조회
-    'MotifDetailRetrieveView',
+    'MotifDetailRetrieveUpdateDestroyView',
 
     # 모티프 세부페이지 수정 / 삭제
     # 'MotifDetailUpdateDestroyView',
@@ -73,7 +73,7 @@ class MotifListCreateView(generics.ListCreateAPIView):
         return Response(content, status=status.HTTP_200_OK)
 
 
-class MotifDetailRetrieveView(generics.RetrieveUpdateDestroyAPIView):
+class MotifDetailRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """
     모티프 세부페이지 조회
     """
@@ -108,9 +108,9 @@ class MotifDetailRetrieveView(generics.RetrieveUpdateDestroyAPIView):
                 motifupdate_serializer = MotifUpdateSerializers
                 motif_update = motifupdate_serializer(motif_info, data=request.data, partial=True)
                 motif_update.is_valid(raise_exception=True)
-                motif_update.save()
+                new_motif = motif_update.save()
 
-                changed_motif = MotifDetailSerializers(motif_update)
+                changed_motif = MotifListCreateSerializers(new_motif, partial=True)
                 content = {
                     "detail": "모티프가 변경되었습니다.",
                     "motifInfo": changed_motif.data
@@ -129,10 +129,11 @@ class MotifDetailRetrieveView(generics.RetrieveUpdateDestroyAPIView):
         """
         모티프 삭제
         """
+        motif_delete = Motif.objects.get(pk=kwargs['motif_pk'])
         content = {
             "detail": "모티프가 삭제되었습니다."
         }
-        super().destroy(self, request, *args, **kwargs)
+        motif_delete.delete()
         return Response(content, status=status.HTTP_200_OK)
 
 

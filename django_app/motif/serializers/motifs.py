@@ -35,10 +35,10 @@ class MotifListCreateSerializers(serializers.ModelSerializer):
             'name_art',
             'motif_author',
         )
-        read_only = (
-            'name_art',
-            'motif_author'
-        )
+        # read_only = (
+        #     'name_art',
+        #     'motif_author'
+        # )
 
     def validate(self, data):
         name_motif = data.get('name_motif')
@@ -86,12 +86,12 @@ class MotifUpdateSerializers(serializers.ModelSerializer):
         """
         모티프 제목 입력값 검사
         """
-        name_motif = data.get('name_motif', None)
-        if not name_motif:
+
+        if not data.get('name_motif', None):
             raise serializers.ValidationError({
                 "detail": "모티프 제목을 적어주세요."
             })
-        if len(name_motif) >= 200:
+        if len(data.get('name_motif')) >= 200:
             raise serializers.ValidationError({
                 "detail": "200자 이하의 제목을 입력해주세요."
             })
