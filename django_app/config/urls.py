@@ -35,8 +35,8 @@ urlpatterns = [
     url(r'^art/',
         include('art.urls')
         ),
-    #
-    # # motif
+
+    # motif
     url(r'^art/',
         include('motif.urls')
         ),

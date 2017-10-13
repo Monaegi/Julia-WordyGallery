@@ -132,6 +132,8 @@ class MyUser(AbstractBaseUser):
     # 사용자의 이름을 저장하는 필드. 회원가입시 등록
     name = models.CharField(
         max_length=100,
+        null=False,
+        blank=False
     )
 
     # 사용자의 이메일을 저장하는 필드. 페이스북 사용자용

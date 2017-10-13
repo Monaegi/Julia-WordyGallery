@@ -25,4 +25,9 @@ urlpatterns = [
     url(r'^(?P<art_pk>\d+)/motifs/(?P<motif_pk>\d+)/edit/$',
         apis.MotifDetailRetrieveUpdateDestroyView.as_view()
         ),
+
+    # 댓글 조회
+    url(r'^(?P<art_pk>\d+)/motifs/(?P<motif_pk>\d+)/comments/$',
+        apis.CommentListCreateView.as_view(),
+        name='commentlist'),
 ]

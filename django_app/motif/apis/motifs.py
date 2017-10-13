@@ -8,7 +8,7 @@ from art.models import Art
 from art.serializers import ArtListSerializers
 from utils.permissions import IsOwnerOrReadOnly
 from ..models import Motif
-from ..serializers import MotifListCreateSerializers, MotifUpdateSerializers
+from ..serializers import MotifListCreateSerializers, MotifUpdateSerializers, MotifDetailSerializers
 
 __all__ = (
     # 모티프 리스트 조회 및 생성
@@ -26,14 +26,13 @@ class MotifListCreateView(generics.ListCreateAPIView):
     """
     모티브 리스트 조회 및 생성
     """
-    serializer_class = MotifListCreateSerializers
+    serializer_class = MotifDetailSerializers
     permission_classes = (IsOwnerOrReadOnly,)
-    parser_classes = (MultiPartParser, FormParser, )
+    parser_classes = (MultiPartParser, FormParser,)
 
     def get(self, request, *args, **kwargs):
         # 해당 작품 정보
         art_info = Art.objects.get(id=kwargs['art_pk'])
-        artinfo_serializer = ArtListSerializers(art_info)
         # 작품에 등록된 모티프 목록
         motif_list = art_info.motif_set.all()
         motiflist_serializer = self.serializer_class(
@@ -42,7 +41,6 @@ class MotifListCreateView(generics.ListCreateAPIView):
         )
 
         content = {
-            "art_info": artinfo_serializer.data,
             "motifList": motiflist_serializer.data
         }
         return Response(content, status=status.HTTP_200_OK)
@@ -66,7 +64,7 @@ class MotifListCreateView(generics.ListCreateAPIView):
         newmotif_serializer.is_valid(raise_exception=True)
         new_motif = newmotif_serializer.save()
 
-        motif_serializer = MotifListCreateSerializers(new_motif)
+        motif_serializer = MotifDetailSerializers(new_motif)
         # 새로운 모티프 저장
         content = {
             "detail": "새로운 모티프를 생성했습니다. 이야기를 시작하세요!",
@@ -79,22 +77,19 @@ class MotifDetailRetrieveView(generics.RetrieveAPIView):
     """
     모티프 세부페이지 조회
     """
-    serializer_class = MotifListCreateSerializers
+    serializer_class = MotifDetailSerializers
     # 로그인한 사용자만 페이지 렌더, 작성자가 아니면 읽기 전용 권한.
-    permission_classes = (IsOwnerOrReadOnly, IsAuthenticated, )
-    parser_classes = (MultiPartParser, FormParser, )
+    permission_classes = (IsOwnerOrReadOnly,)
+    parser_classes = (MultiPartParser, FormParser,)
 
     def get(self, request, *args, **kwargs):
         """
         모티프 세부 정보와 연결된 작품 정보
         """
-        art_info = Art.objects.get(pk=kwargs['art_pk'])
-        artinfo_serializer = ArtListSerializers(art_info)
         motif_info = Motif.objects.get(pk=kwargs['motif_pk'])
-        motifinfo_serializer = MotifListCreateSerializers(motif_info)
+        motifinfo_serializer = self.serializer_class(motif_info)
 
         content = {
-            'artInfo': artinfo_serializer.data,
             'motifInfo': motifinfo_serializer.data
         }
         return Response(
@@ -122,7 +117,7 @@ class MotifDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             motif_update.is_valid(raise_exception=True)
             motif_update.save()
 
-            changed_motif = self.serializer_class(motif_update)
+            changed_motif = MotifDetailSerializers(motif_update)
             content = {
                 "detail": "모티프가 변경되었습니다.",
                 "motifInfo": changed_motif.data

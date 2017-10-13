@@ -2,9 +2,13 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from art.models import Art
+from art.serializers import ArtListSerializers
 from ..models import Motif
 
 __all__ = (
+    # nested 세부 페이지용
+    'MotifDetailSerializers',
+
     # 조회 / 생성용
     'MotifListCreateSerializers',
 
@@ -13,6 +17,14 @@ __all__ = (
 )
 
 User = get_user_model()
+
+
+class MotifDetailSerializers(serializers.ModelSerializer):
+    name_art = ArtListSerializers()
+
+    class Meta:
+        model = Motif
+        fields = '__all__'
 
 
 class MotifListCreateSerializers(serializers.ModelSerializer):
