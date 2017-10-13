@@ -76,7 +76,7 @@ class MyUserManager(BaseUserManager):
             user_type=User.USER_TYPE_FACEBOOK,
             username=user_info['id'],
             name=user_info['first_name'] + user_info['last_name'],
-            email=user_info['email']
+            email=user_info['email'] if user_info['email'] else ''
         )
 
         # 유저가 생성된 경우 페이스북의 프로필 이미지를 가져온다.

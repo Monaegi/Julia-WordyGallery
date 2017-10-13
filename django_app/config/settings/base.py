@@ -42,7 +42,7 @@ AUTH_USER_MODEL = 'member.MyUser'
 # REST_API 설정
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-      'rest_framework.authentication.BasicAuthentication',
+      # 'rest_framework.authentication.BasicAuthentication',
       'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
