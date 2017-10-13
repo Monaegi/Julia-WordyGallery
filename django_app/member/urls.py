@@ -8,10 +8,10 @@ app_name = 'member'
 
 urlpatterns = [
     # 토큰 생성 뷰의 url
-    url(
-        r'api-token-auth/',
-        views.obtain_auth_token)
-    ,
+    # url(
+    #     r'api-token-auth/',
+    #     views.obtain_auth_token)
+    # ,
     url(r'signup/$',
         apis.UserSignupView.as_view(),
         name='signup'

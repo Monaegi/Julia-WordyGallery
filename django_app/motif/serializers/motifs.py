@@ -30,7 +30,15 @@ class MotifDetailSerializers(serializers.ModelSerializer):
 class MotifListCreateSerializers(serializers.ModelSerializer):
     class Meta:
         model = Motif
-        fields = '__all__'
+        fields = (
+            'name_motif',
+            'name_art',
+            'motif_author',
+        )
+        read_only = (
+            'name_art',
+            'motif_author'
+        )
 
     def validate(self, data):
         name_motif = data.get('name_motif')

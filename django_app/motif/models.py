@@ -32,6 +32,9 @@ class Motif(models.Model):
         on_delete=models.PROTECT,
     )
 
+    def __str__(self):
+        return self.name_motif
+
 
 # 코멘트 저장 모델
 class Comment(models.Model):

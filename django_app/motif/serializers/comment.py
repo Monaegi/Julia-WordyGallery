@@ -61,3 +61,32 @@ class CommentListCreateSerializers(serializers.ModelSerializer):
             comment_author=self.validated_data['comment_author'].pk,
         )
         return comment
+
+
+class CommentUpdateDestroySerializers(serializers.ModelSerializer):
+    """
+    comment 수정 및 삭제용
+    """
+    class Meta:
+        model = Comment
+        fields = (
+            'comment',
+            'comment_author',
+            'motif',
+        )
+        read_only_fields = (
+            'motif',
+            'comment_author',
+        )
+
+    def validate(self, data):
+        comment_author = data.get('comment_author')
+        if not comment_author == self.request.user:
+            raise serializers.ValidationError({
+                "detail": "댓글 작성자만 수정이 가능합니다."
+            })
+        return data
+
+    def update(self, instance, validated_data):
+        pass
+

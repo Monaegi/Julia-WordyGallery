@@ -23,7 +23,7 @@ class CommentListCreateView(generics.CreateAPIView):
     def get(self, request, *args, **kwargs):
         motif_info = Motif.objects.get(pk=kwargs['motif_pk'])
         motifinfo_serializer = MotifDetailSerializers(motif_info)
-        comments = Comment.objects.filter(motif=request.data.get('motif')).all()
+        comments = Comment.objects.all().filter(motif=motif_info)
         commentlist_serializer = CommentDetailSerializers(comments, many=True)
         content = {
             'commentList': commentlist_serializer.data,
@@ -45,3 +45,8 @@ class CommentListCreateView(generics.CreateAPIView):
             "commentContent": comment_serializer.data,
         }
         return Response(content, status=status.HTTP_200_OK)
+
+
+class CommentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    #  serializer_class = CommentUpdateDestroySerializers
+    pass

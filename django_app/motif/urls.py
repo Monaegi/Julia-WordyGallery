@@ -23,7 +23,7 @@ urlpatterns = [
 
     # 모티프 수정 및 삭제
     url(r'^(?P<art_pk>\d+)/motifs/(?P<motif_pk>\d+)/edit/$',
-        apis.MotifDetailRetrieveUpdateDestroyView.as_view()
+        apis.MotifDetailRetrieveView.as_view()
         ),
 
     # 댓글 조회
