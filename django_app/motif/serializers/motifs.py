@@ -2,9 +2,13 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from art.models import Art
+from art.serializers import ArtListSerializers
 from ..models import Motif
 
 __all__ = (
+    # nested 세부 페이지용
+    'MotifDetailSerializers',
+
     # 조회 / 생성용
     'MotifListCreateSerializers',
 
@@ -15,10 +19,26 @@ __all__ = (
 User = get_user_model()
 
 
-class MotifListCreateSerializers(serializers.ModelSerializer):
+class MotifDetailSerializers(serializers.ModelSerializer):
+    name_art = ArtListSerializers()
+
     class Meta:
         model = Motif
         fields = '__all__'
+
+
+class MotifListCreateSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Motif
+        fields = (
+            'name_motif',
+            'name_art',
+            'motif_author',
+        )
+        # read_only = (
+        #     'name_art',
+        #     'motif_author'
+        # )
 
     def validate(self, data):
         name_motif = data.get('name_motif')
@@ -66,12 +86,12 @@ class MotifUpdateSerializers(serializers.ModelSerializer):
         """
         모티프 제목 입력값 검사
         """
-        name_motif = data.get('name_motif', None)
-        if not name_motif:
+
+        if not data.get('name_motif', None):
             raise serializers.ValidationError({
                 "detail": "모티프 제목을 적어주세요."
             })
-        if len(name_motif) >= 200:
+        if len(data.get('name_motif')) >= 200:
             raise serializers.ValidationError({
                 "detail": "200자 이하의 제목을 입력해주세요."
             })

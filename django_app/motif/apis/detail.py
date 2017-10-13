@@ -18,7 +18,6 @@ class MotifDetailRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
     """
     모티프 세부페이지 조회 / 수정 / 삭제
     """
-    # queryset = Motif.objects.get(pk=)
     serializer_class = MotifListCreateSerializers
     # 로그인한 사용자만 페이지 렌더, 작성자가 아니면 읽기 전용 권한.
     permission_classes = (IsAuthenticated, IsMotifOwnerOrReadOnly, )

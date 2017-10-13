@@ -38,11 +38,41 @@ FACEBOOK_SECRET_CODE = config_secret_common['facebook_login']['facebook_secret_c
 
 AUTH_USER_MODEL = 'member.MyUser'
 
+# DJANGO_CORS_HEAD
+CORS_ALLOW_CREDENTIALS = True
+
+# 해당 리스트의 url만 CORS 허용
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8000',
+)
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+# 허용되는 헤더들
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
+
+
 
 # REST_API 설정
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-      'rest_framework.authentication.BasicAuthentication',
       'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -68,6 +98,8 @@ INSTALLED_APPS = [
     ### Install ###
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
+    'utils'
     ###############
 ]
 
@@ -80,6 +112,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Custom #
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

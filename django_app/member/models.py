@@ -76,7 +76,7 @@ class MyUserManager(BaseUserManager):
             user_type=User.USER_TYPE_FACEBOOK,
             username=user_info['id'],
             name=user_info['first_name'] + user_info['last_name'],
-            email=user_info['email']
+            email=user_info['email'] if user_info['email'] else ''
         )
 
         # 유저가 생성된 경우 페이스북의 프로필 이미지를 가져온다.
@@ -132,6 +132,8 @@ class MyUser(AbstractBaseUser):
     # 사용자의 이름을 저장하는 필드. 회원가입시 등록
     name = models.CharField(
         max_length=100,
+        null=False,
+        blank=False
     )
 
     # 사용자의 이메일을 저장하는 필드. 페이스북 사용자용
