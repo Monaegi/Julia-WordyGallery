@@ -45,7 +45,7 @@ class Comment(models.Model):
         on_delete=models.CASCADE
     )
 
-    # comment 컨텐트
+    # comment 내용
     comment = models.TextField()
 
     # refer_user 활성화용 필드
@@ -105,6 +105,9 @@ class Comment(models.Model):
 
             self.html_comment = ori_comment
             super().save(update_fields=['html_comment'])
+
+    def __str__(self):
+        return self.comment
 
 
 class CommentLike(models.Model):
